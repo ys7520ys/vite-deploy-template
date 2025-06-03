@@ -2993,7 +2993,7 @@ const DIST_DIR = path.join(TEMPLATE_DIR, "dist");
 const PUBLIC_DIR = path.join(TEMPLATE_DIR, "public");
 
 // ✅ 너의 Netlify Site ID 정확히 입력!
-const SITE_ID = "295f8ded-3060-4815-996e-3ab7277e1526";
+const SITE_ID = "c582cf04-18cd-497a-89c3-f2820c7ba85b";
 
 exports.autoDeploy = onRequest(
   {
