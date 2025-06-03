@@ -2966,8 +2966,6 @@
 // );
 
 
-
-
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
@@ -2987,12 +2985,13 @@ const NETLIFY_TOKEN = defineSecret("NETLIFY_TOKEN");
 initializeApp({ credential: applicationDefault() });
 const db = getFirestore();
 
-// ✅ 경로 정의
-const TEMPLATE_DIR = "/workspace"; // ← Functions 실행 환경 기준 절대 경로
-const DIST_DIR = path.join(TEMPLATE_DIR, "dist");
-const PUBLIC_DIR = path.join(TEMPLATE_DIR, "public");
+// ✅ 실행 환경 기준 경로
+const FUNCTION_DIR = __dirname; // /workspace/functions
+const TEMPLATE_DIR = path.join(FUNCTION_DIR, ".."); // /workspace
+const PUBLIC_DIR = path.join(FUNCTION_DIR, "public"); // functions/public
+const DIST_DIR = path.join(TEMPLATE_DIR, "dist"); // /workspace/dist
 
-// ✅ 너의 Netlify Site ID 정확히 입력!
+// ✅ Netlify Site ID 정확히 입력
 const SITE_ID = "c582cf04-18cd-497a-89c3-f2820c7ba85b";
 
 exports.autoDeploy = onRequest(
@@ -3018,8 +3017,9 @@ exports.autoDeploy = onRequest(
 
       const orderData = snapshot.docs[0].data();
 
-      // ✅ public/data.json 생성
+      // ✅ data.json 저장 (functions/public/data.json)
       const dataPath = path.join(PUBLIC_DIR, "data.json");
+      fsExtra.ensureDirSync(PUBLIC_DIR);
       fs.writeFileSync(dataPath, JSON.stringify(orderData, null, 2), "utf-8");
       logger.info("✅ data.json 저장 완료");
 
@@ -3043,6 +3043,7 @@ exports.autoDeploy = onRequest(
 
       archive.pipe(output);
       archive.directory(DIST_DIR, false);
+
       await new Promise((resolve, reject) => {
         output.on("close", resolve);
         output.on("error", reject);
@@ -3064,7 +3065,7 @@ exports.autoDeploy = onRequest(
 
       logger.info(`✅ 도메인 등록 완료`);
 
-      // ✅ Netlify에 업로드
+      // ✅ Netlify에 배포
       logger.info("🚀 Netlify에 배포 중...");
       const zipBuffer = fs.readFileSync(zipPath);
       const deployRes = await fetch(`https://api.netlify.com/api/v1/sites/${SITE_ID}/deploys`, {
