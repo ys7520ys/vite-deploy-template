@@ -1,0 +1,17 @@
+{
+  "shopName": "코딱지 마켓",
+  "description": "코딱지님이 만든 자동 판매 사이트입니다.",
+  "bannerImage": "/banner.jpg",
+  "products": [
+    {
+      "name": "멋진 코딱지 티셔츠",
+      "image": "/shirt.jpg",
+      "price": 19900
+    },
+    {
+      "name": "편한 코딱지 바지",
+      "image": "/pants.jpg",
+      "price": 25900
+    }
+  ]
+}
