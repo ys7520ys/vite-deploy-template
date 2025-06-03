@@ -2965,7 +2965,6 @@
 //   }
 // );
 
-
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
@@ -2978,20 +2977,17 @@ const fetch = require("node-fetch");
 const archiver = require("archiver");
 const { spawnSync } = require("child_process");
 
-// 🔐 Netlify 비밀 토큰
 const NETLIFY_TOKEN = defineSecret("NETLIFY_TOKEN");
 
-// ✅ Firebase 초기화
 initializeApp({ credential: applicationDefault() });
 const db = getFirestore();
 
-// ✅ 실행 환경 기준 경로
+// ✅ 정확한 템플릿 경로 지정
 const FUNCTION_DIR = __dirname; // /workspace/functions
-const TEMPLATE_DIR = path.join(FUNCTION_DIR, ".."); // /workspace
-const PUBLIC_DIR = path.join(FUNCTION_DIR, "public"); // functions/public
-const DIST_DIR = path.join(TEMPLATE_DIR, "dist"); // /workspace/dist
+const TEMPLATE_DIR = path.join(FUNCTION_DIR, "..", "vite-template"); // /workspace/vite-template
+const PUBLIC_DIR = path.join(TEMPLATE_DIR, "public"); // /workspace/vite-template/public
+const DIST_DIR = path.join(TEMPLATE_DIR, "dist"); // /workspace/vite-template/dist
 
-// ✅ Netlify Site ID 정확히 입력
 const SITE_ID = "c582cf04-18cd-497a-89c3-f2820c7ba85b";
 
 exports.autoDeploy = onRequest(
@@ -3017,13 +3013,13 @@ exports.autoDeploy = onRequest(
 
       const orderData = snapshot.docs[0].data();
 
-      // ✅ data.json 저장 (functions/public/data.json)
+      // ✅ data.json 저장 (vite-template/public/data.json)
       const dataPath = path.join(PUBLIC_DIR, "data.json");
       fsExtra.ensureDirSync(PUBLIC_DIR);
       fs.writeFileSync(dataPath, JSON.stringify(orderData, null, 2), "utf-8");
       logger.info("✅ data.json 저장 완료");
 
-      // ✅ vite build 실행
+      // ✅ vite build
       logger.info("🛠️ vite build 실행...");
       const build = spawnSync("npm", ["run", "build"], {
         cwd: TEMPLATE_DIR,
@@ -3063,9 +3059,9 @@ exports.autoDeploy = onRequest(
         body: JSON.stringify({ name: domain }),
       });
 
-      logger.info(`✅ 도메인 등록 완료`);
+      logger.info("✅ 도메인 등록 완료");
 
-      // ✅ Netlify에 배포
+      // ✅ Netlify 배포
       logger.info("🚀 Netlify에 배포 중...");
       const zipBuffer = fs.readFileSync(zipPath);
       const deployRes = await fetch(`https://api.netlify.com/api/v1/sites/${SITE_ID}/deploys`, {
