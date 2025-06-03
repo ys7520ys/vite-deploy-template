@@ -1,0 +1,33 @@
+.tpHeader02 {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+.tpHeader02__nav {
+  background: #000;
+  padding: 20px;
+}
+.tpHeader02__navLists {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+}
+.tpHeader02 .linkButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.tpHeader02 .linkButton:hover {
+  opacity: 0.5;
+}
+.tpHeader02 .linkButton.active {
+  font-weight: bold;
+  font-size: 20px;
+}/*# sourceMappingURL=TpHeader02.module.css.map */
