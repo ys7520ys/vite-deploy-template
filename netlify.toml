@@ -1,6 +1,9 @@
 [build]
 command = "npm run build"
 publish = "dist"
+functions = "functions"
 
-[build.environment]
-NETLIFY_NEXT_PLUGIN_SKIP = "true"
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
